@@ -1,50 +1,59 @@
-package main
+package datastructures
 
 import (
+	"bytes"
 	"fmt"
+	"strconv"
 )
 
 type Node struct {
 	value int
-	next *Node
+	next  *Node
 }
 
 type LinkedList struct {
 	len, iter int
-	head *Node
+	head      *Node
 }
 
 /**
-	Returns next value.
-	Only moves an internal iterator, does alter underlying list.
-	Can return nil when list is empty or when at the end of the list.
+Constructor function to correctly set initial length value.
+*/
+func NewLinkedList(initialHeadValue int) *LinkedList {
+	return &LinkedList{1, 0, &Node{initialHeadValue, nil}}
+}
+
+/**
+Returns next value.
+Only moves an internal iterator, does not alter underlying list.
+Can return nil when list is empty or when at the end of the list.
 */
 func (ll *LinkedList) Next() *Node {
 	if ll.len == 0 || ll.iter >= ll.len {
 		return nil
-	} else {
-		for i, tmp := 0, ll.head; tmp != nil; tmp = tmp.next {
-			if ll.iter == i {
-				ll.iter++
-				return tmp
-			}
-			i++
-		}
-
-		return nil
 	}
+
+	for i, tmp := 0, ll.head; tmp != nil; tmp = tmp.next {
+		if ll.iter == i {
+			ll.iter++
+			return tmp
+		}
+		i++
+	}
+
+	return nil
 }
 
 /**
-	Reset iterator to start of list.
+Reset iterator to start of list.
 */
 func (ll *LinkedList) Reset() {
 	ll.iter = 0
 }
 
 /**
-	Add node to head.
-	Constant time operation O(1).
+Add node to head.
+Constant time operation O(1).
 */
 func (ll *LinkedList) PushToHead(value int) {
 	node := &Node{value, nil}
@@ -53,8 +62,8 @@ func (ll *LinkedList) PushToHead(value int) {
 }
 
 /**
-	Add node to tail.
-	Linear time operation O(n).
+Add node to tail.
+Linear time operation O(n).
 */
 func (ll *LinkedList) PushToTail(value int) {
 	node := &Node{value, nil}
@@ -64,12 +73,12 @@ func (ll *LinkedList) PushToTail(value int) {
 			ll.len++
 			break
 		}
-	}	
+	}
 }
 
 /**
-	Remove node from head.
-	Constant time operation O(1).
+Remove node from head.
+Constant time operation O(1).
 */
 func (ll *LinkedList) PopFromHead() {
 	if ll.len == 0 {
@@ -84,8 +93,8 @@ func (ll *LinkedList) PopFromHead() {
 }
 
 /**
-	Remove node from tail.
-	Linear time operation O(n).
+Remove node from tail.
+Linear time operation O(n).
 */
 func (ll *LinkedList) PopFromTail() {
 	if ll.len == 0 {
@@ -98,64 +107,38 @@ func (ll *LinkedList) PopFromTail() {
 			if tmp.next.next == nil {
 				tmp.next = nil
 				ll.len--
-				break;
+				break
 			}
 		}
 	}
 }
 
 /**
-	Returns length of the list.
+Returns length of the list.
 */
 func (ll *LinkedList) Len() int {
 	return ll.len
 }
 
 /**
-	Prints visual representation of list.
-	Truncates output after 8 nodes.
+Prints visual representation of list.
+Truncates output after 8 nodes.
 */
-func (ll *LinkedList) Print() {
-	fmt.Print("[")
+func (ll *LinkedList) Print() string {
+	var buf bytes.Buffer
+	buf.WriteString("[")
 	for i, tmp := 1, ll.head; tmp != nil; tmp = tmp.next {
-		if (i > 8) {
-			fmt.Print("...")
-			break;
+		if i > 8 {
+			buf.WriteString("...")
+			break
 		}
 
-		fmt.Print(tmp.value)
+		buf.WriteString(strconv.Itoa(tmp.value))
 		if tmp.next != nil {
-			fmt.Print("->")
+			buf.WriteString("->")
 		}
 		i++
 	}
-	fmt.Print("]\n")
-}
-
-func main() {
-	ll := LinkedList{}
-	ll.PushToHead(10)
-	ll.PushToHead(30)
-	ll.PushToTail(999)
-	ll.PushToTail(1000)
-
-	next := ll.Next()
-	next = ll.Next()
-	next = ll.Next()
-	if (next != nil) {
-		fmt.Println(next.value)
-	}
-
-	// fmt.Println(ll.Len())
-	// ll.Print()
-	// ll.PopFromHead()
-	// ll.Print()
-	// ll.PopFromHead()
-	// ll.Print()
-	// ll.PopFromTail()
-	// ll.Print()
-	// ll.PopFromHead()
-	// ll.Print()
-	// ll.PopFromTail()
-	// ll.Print()
+	buf.WriteString("]")
+	return buf.String()
 }
